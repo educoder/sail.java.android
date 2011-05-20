@@ -113,6 +113,10 @@ public class Event {
 		Gson gson = new Gson();
 		return gson.toJson(this);
 	}
+	
+	public String toString() {
+		return toJson();
+	}
 
 	public static Event fromJson(String json) {
 		GsonBuilder gsonBuilder = new GsonBuilder();
