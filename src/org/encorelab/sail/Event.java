@@ -66,6 +66,13 @@ public class Event {
 
 	protected String eventType;
 	protected Object payload;
+	
+	// These fields should not be serialized (hence 'transient'). 
+	// They are assigned after deserialization in 
+	// org.encorelab.sail.EventListener. 
+	protected transient String from;
+	protected transient String to;
+	protected transient String stanza;
 
 	public String getType() {
 		return eventType;
@@ -73,6 +80,30 @@ public class Event {
 
 	public void setType(String type) {
 		this.eventType = type;
+	}
+
+	public String getFrom() {
+		return from;
+	}
+
+	public void setFrom(String from) {
+		this.from = from;
+	}
+
+	public String getTo() {
+		return to;
+	}
+
+	public void setTo(String to) {
+		this.to = to;
+	}
+
+	public String getStanza() {
+		return stanza;
+	}
+
+	public void setStanza(String stanza) {
+		this.stanza = stanza;
 	}
 
 	public Object getPayload() {
