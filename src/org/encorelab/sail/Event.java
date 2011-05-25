@@ -73,6 +73,7 @@ public class Event {
 	protected transient String from;
 	protected transient String to;
 	protected transient String stanza;
+	protected transient String rawPayload;
 
 	public String getType() {
 		return eventType;
@@ -108,6 +109,14 @@ public class Event {
 
 	public Object getPayload() {
 		return payload;
+	}
+	
+	public Object getPayload(Class payloadType) {
+		if (rawPayload == null)
+			return this.getPayload();
+		
+		Gson gson = new Gson();
+		return gson.fromJson(rawPayload, payloadType);
 	}
 
 	public int getPayloadAsInt() {
@@ -155,6 +164,13 @@ public class Event {
 		Gson gson = gsonBuilder.create();
 		return gson.fromJson(json, Event.class);
 	}
+	
+	public static Event fromJson(String json, Class payloadType) {
+		GsonBuilder gsonBuilder = new GsonBuilder();
+		gsonBuilder.registerTypeAdapter(Event.class, new EventDeserializer());
+		Gson gson = gsonBuilder.create();
+		return gson.fromJson(json, Event.class);
+	}
 
 	// based on code from http://stackoverflow.com/questions/2779251/convert-json-to-hashmap-using-gson-in-java/4799594#4799594
 	private static class EventDeserializer implements JsonDeserializer<Event> {
@@ -168,7 +184,9 @@ public class Event {
 				String eventType = eventJson.get("eventType").getAsString();
 				Object payload = deserializePayload(eventJson.get("payload"), context);
 				
-				return new Event(eventType, payload);
+				Event ev = new Event(eventType, payload);
+				ev.rawPayload = eventJson.get("payload").toString();
+				return ev;
 			} else {
 				throw new JsonParseException("Not a valid Sail Event: "+json.toString());
 			}
