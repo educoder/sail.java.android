@@ -1,16 +1,21 @@
-package org.encorelab.sail;
+package org.encorelab.sail.android;
 
 import java.util.HashMap;
 
+import org.encorelab.sail.Event;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 
+import android.os.Handler;
+
 public class EventListener implements PacketListener {
 	private HashMap<String, EventResponder> responders;
+	private Handler handler;
 	
-	public EventListener() {
-		responders = new HashMap<String, EventResponder>();
+	public EventListener(Handler handler) {
+		this.handler = handler;
+		this.responders = new HashMap<String, EventResponder>();
 	}
 	
 	public void processPacket(Packet packet) {
@@ -20,7 +25,9 @@ public class EventListener implements PacketListener {
 		ev.setStanza(packet.toXML());
 		
 		if (responders.containsKey(ev.getType())) {
-			responders.get(ev.getType()).triggered(ev);
+			EventResponder er = responders.get(ev.getType());
+			er.setEvent(ev);
+			handler.post(er);
 		}
 	}
 	
