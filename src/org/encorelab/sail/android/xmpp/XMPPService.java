@@ -19,6 +19,9 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+// FIXME: reconcile this with org.encorelab.sail.XMPPClient
+//        (probably just instantiate an XMPPClient as a member
+//         variable inside XMPPService and delegate to XMPPClient)
 public class XMPPService extends Service {
 	
 	public static final String TAG = "XMPPService";
